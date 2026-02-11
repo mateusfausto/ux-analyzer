@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Analisa páginas autenticadas e gera relatório UX.",
   "permissions": ["activeTab", "tabs", "downloads", "storage", "scripting"],
-  "host_permissions": ["http://localhost:3000/*"],
+  "host_permissions": ["http://localhost:3000/*", "https://*/*"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
