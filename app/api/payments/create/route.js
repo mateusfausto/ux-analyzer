@@ -13,30 +13,25 @@ export async function POST(request) {
       )
     }
 
-    const supabase = getSupabaseClient()
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Supabase não configurado' },
-        { status: 500 }
-      )
-    }
-
     const allowTestMode = process.env.PAYMENTS_TEST_MODE !== 'false'
     const isTestMode = Boolean(test_mode) && allowTestMode
 
     if (isTestMode) {
       const paymentId = `test_${Date.now()}`
 
-      await supabase
-        .from('payments')
-        .insert({
-          user_email: email || null,
-          payment_id: paymentId,
-          amount,
-          status: 'approved',
-          payment_method: payment_method || 'test',
-          is_test: true,
-        })
+      const supabase = getSupabaseClient()
+      if (supabase) {
+        await supabase
+          .from('payments')
+          .insert({
+            user_email: email || null,
+            payment_id: paymentId,
+            amount,
+            status: 'approved',
+            payment_method: payment_method || 'test',
+            is_test: true,
+          })
+      }
 
       return NextResponse.json({
         payment_id: paymentId,
@@ -49,6 +44,14 @@ export async function POST(request) {
       return NextResponse.json(
         { error: 'E-mail é obrigatório' },
         { status: 400 }
+      )
+    }
+
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase não configurado' },
+        { status: 500 }
       )
     }
 
