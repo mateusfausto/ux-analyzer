@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import { captureScreenshot } from '@/lib/screenshot'
 import { analyzeWithGemini } from '@/lib/gemini'
 import { generatePDF } from '@/lib/pdf'
@@ -24,14 +24,16 @@ export async function POST(request) {
     // Gerar PDF
     const pdfBuffer = generatePDF(analysis, url)
 
-    // Salvar no banco
-    await supabase
-      .from('analyses')
-      .insert({
-        user_email,
-        url,
-        overall_score: analysis.overall_score,
-      })
+    const supabase = getSupabaseClient()
+    if (supabase) {
+      await supabase
+        .from('analyses')
+        .insert({
+          user_email,
+          url,
+          overall_score: analysis.overall_score,
+        })
+    }
 
     // Retornar PDF
     return new NextResponse(pdfBuffer, {

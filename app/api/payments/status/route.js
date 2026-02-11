@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase não configurado' },
+        { status: 500 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const paymentId = searchParams.get('payment_id')
 

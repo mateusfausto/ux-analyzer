@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server'
 import { getPaymentClient } from '@/lib/mercadopago'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 
 export async function POST(request) {
   try {
+    const supabase = getSupabaseClient()
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Supabase não configurado' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
 
     if (body.type === 'payment') {
