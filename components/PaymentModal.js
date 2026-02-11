@@ -6,15 +6,42 @@ import { X, QrCode, CreditCard, Loader2 } from 'lucide-react'
 export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, title = 'Pagamento da Análise', amount = 5.00, description = 'Pagamento único por análise', confirmLabel }) {
   const [paymentMethod, setPaymentMethod] = useState('pix')
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
 
   if (!isOpen) return null
 
   const handlePayment = async () => {
+    const paymentsRequired = process.env.NEXT_PUBLIC_PAYMENTS_REQUIRED === 'true'
+    if (paymentsRequired && !email.trim()) {
+      alert('Informe seu e-mail para continuar')
+      return
+    }
+
     setLoading(true)
 
-    await new Promise(resolve => setTimeout(resolve, 300))
-    onPaymentSuccess()
-    setLoading(false)
+    try {
+      const response = await fetch('/api/payments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          email: email.trim() || null,
+          payment_method: paymentMethod,
+          test_mode: !paymentsRequired,
+        }),
+      })
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        throw new Error(payload?.error || 'Erro ao processar pagamento')
+      }
+
+      onPaymentSuccess()
+    } catch (error) {
+      alert(error?.message || 'Erro ao processar pagamento')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -43,6 +70,17 @@ export default function PaymentModal({ isOpen, onClose, onPaymentSuccess, title 
             <p className="text-gray-600">
               {description}
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">E-mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="seu@email.com"
+              className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
           </div>
 
           <div className="space-y-3">

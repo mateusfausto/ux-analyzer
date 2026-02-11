@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { payment } from '@/lib/mercadopago'
+import { getPaymentClient } from '@/lib/mercadopago'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(request) {
@@ -7,8 +7,16 @@ export async function POST(request) {
     const body = await request.json()
 
     if (body.type === 'payment') {
+      const paymentClient = getPaymentClient()
+      if (!paymentClient) {
+        return NextResponse.json(
+          { error: 'MERCADOPAGO_ACCESS_TOKEN não configurado' },
+          { status: 500 }
+        )
+      }
+
       const paymentId = body.data.id
-      const paymentData = await payment.get({ id: paymentId })
+      const paymentData = await paymentClient.get({ id: paymentId })
 
       if (paymentData.status === 'approved') {
         await supabase
