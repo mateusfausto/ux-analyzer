@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "start": "npx puppeteer browsers install chrome && npx puppeteer browsers install chromium && next start",
+    "postinstall": "npx puppeteer browsers install chrome && npx puppeteer browsers install chromium"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.43.0",
