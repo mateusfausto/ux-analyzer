@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UX Analyzer</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        margin: 0;
+        padding: 18px;
+        width: 340px;
+        background: #f3f4f6;
+        color: #0f172a;
+        border-radius: 24px;
+        overflow: hidden;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0;
+        font-weight: 700;
+      }
+      .card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 18px;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      }
+      .label {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .url {
+        font-size: 12px;
+        word-break: break-all;
+        color: #1e293b;
+        background: #f1f5f9;
+        border-radius: 14px;
+        padding: 10px 12px;
+      }
+      .input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        font-size: 13px;
+        margin-top: 6px;
+        background: #f1f5f9;
+        outline: none;
+      }
+      .input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      button {
+        flex: 1;
+        border: none;
+        padding: 12px;
+        border-radius: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+      .primary {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25);
+      }
+      .primary:hover {
+        transform: translateY(-1px);
+      }
+      .secondary {
+        background: #0f172a;
+        color: #fff;
+      }
+      #status {
+        margin-top: 12px;
+        font-size: 12px;
+        color: #475569;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">UX</div>
+      <div>
+        <h1>UX Analyzer</h1>
+        <div class="label">Extensão de análise</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">Página atual</div>
+      <div class="url" id="currentUrl">Carregando...</div>
+
+      <div class="label" style="margin-top: 12px;">API</div>
+      <input class="input" id="apiBase" placeholder="http://localhost:3000" />
+
+      <div class="actions">
+        <button class="primary" id="analyze">Analisar</button>
+      </div>
+
+      <div id="status"></div>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>
