@@ -2,6 +2,8 @@ const currentUrlEl = document.getElementById('currentUrl')
 const apiBaseInput = document.getElementById('apiBase')
 const analyzeButton = document.getElementById('analyze')
 const statusEl = document.getElementById('status')
+const DEFAULT_API_BASE = 'https://uxanalyzer.onrender.com'
+let apiBase = DEFAULT_API_BASE
 
 const setStatus = (message) => {
   statusEl.textContent = message
@@ -9,13 +11,15 @@ const setStatus = (message) => {
 
 const loadApiBase = () => {
   chrome.storage.local.get(['apiBase'], (result) => {
-    apiBaseInput.value = result.apiBase || 'http://localhost:3000'
+    apiBase = (result.apiBase || DEFAULT_API_BASE).trim()
+    apiBaseInput.value = apiBase
   })
 }
 
 const persistApiBase = () => {
   const value = apiBaseInput.value.trim()
-  chrome.storage.local.set({ apiBase: value })
+  apiBase = value || DEFAULT_API_BASE
+  chrome.storage.local.set({ apiBase })
 }
 
 const loadCurrentTab = () => {
@@ -64,13 +68,13 @@ const analyzeCurrentTab = async () => {
       context.drawImage(img, 0, y, canvas.width, Math.floor(height * pixelRatio))
     }
 
-    const apiBase = apiBaseInput.value.trim() || 'http://localhost:3000'
+    const resolvedApiBase = apiBaseInput.value.trim() || apiBase || DEFAULT_API_BASE
     persistApiBase()
     const imageBase64 = canvas.toDataURL('image/png').split(',')[1]
 
     try {
       setStatus('Enviando para análise...')
-      const response = await fetch(`${apiBase}/api/analyze-image`, {
+      const response = await fetch(`${resolvedApiBase}/api/analyze-image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -105,6 +109,7 @@ const analyzeCurrentTab = async () => {
 }
 
 analyzeButton.addEventListener('click', analyzeCurrentTab)
+apiBaseInput.addEventListener('change', persistApiBase)
 
 loadApiBase()
 loadCurrentTab()
